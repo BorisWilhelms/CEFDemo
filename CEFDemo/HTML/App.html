@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
+    <script src="js/bootstrap.min.js"></script>
+
+</head>
+<body>
+    <header class="navbar navbar-dark bg-dark">
+        <h1 class="navbar-brand">TODO Application</h1>
+    </header>
+    <div>
+        <ul class="list-group">
+           
+        </ul>
+    </div>
+
+    <template>
+        <li class="list-group-item" data-id="">
+            <p class="mb-1"></p>
+            <small>
+                Actions:
+                <span data-action="edit" class="oi oi-pencil" title="Edit" aria-hidden="true"></span>
+                <span data-action="delete" class="oi oi-delete" title="Delete" aria-hidden="true"></span>
+            </small>
+        </li>
+    </template>
+
+    <script>
+
+        const list = document.querySelector("ul");
+
+        CefSharp.BindObjectAsync("bridge").then(_ => {
+            list.addEventListener("click", e => {
+                const action = e.target.dataset.action;
+                if (!action) {
+                    return;
+                }
+
+                const item = {
+                    Id: e.target.parentNode.parentNode.dataset.id,
+                    Text: e.target.parentNode.parentNode.querySelector("p").innerText
+                };
+
+                switch (action) {
+                    case "edit":
+                        bridge.edit(item);
+                        break;
+                    case "delete":
+                        bridge.delete(item).then((res) => {
+                            if (res === true) {
+                                deleteItem(item.Id);
+                            }
+                        });
+                }
+            });
+        });
+
+        function deleteItem(itemId) {
+            list.querySelector(`li[data-id="${itemId}"`).remove();
+        }
+
+        function updateItem(todoItem) {
+            var item = list.querySelector(`li[data-id="${todoItem.Id}"`);
+            if (item) {
+                item.querySelector("p").innerText = todoItem.Text;
+            } else {
+                item = document.createElement("template");
+                item.innerHTML = document.querySelector("template").innerHTML;
+                item.content.querySelector("li").dataset.id = todoItem.Id;
+                item.content.querySelector("p").innerText = todoItem.Text;
+                list.appendChild(item.content);
+            }
+        }
+    </script>
+</body>
+</html>
