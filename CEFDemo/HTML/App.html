@@ -34,7 +34,10 @@
 
         const list = document.querySelector("ul");
 
+        // Aquire an object with the name "bridge"
         CefSharp.BindObjectAsync("bridge").then(_ => {
+
+            // "bridge" is aquired and not in window scope (window.brdige)
             list.addEventListener("click", e => {
                 const action = e.target.dataset.action;
                 if (!action) {
@@ -48,9 +51,11 @@
 
                 switch (action) {
                     case "edit":
+                        // call edit on "bridge" and pass item
                         bridge.edit(item);
                         break;
                     case "delete":
+                        // call edit on "bridge" and pass item
                         bridge.delete(item).then((res) => {
                             if (res === true) {
                                 deleteItem(item.Id);
@@ -64,6 +69,7 @@
             list.querySelector(`li[data-id="${itemId}"`).remove();
         }
 
+        // will be called from "bridge"
         function updateItem(todoItem) {
             var item = list.querySelector(`li[data-id="${todoItem.Id}"`);
             if (item) {

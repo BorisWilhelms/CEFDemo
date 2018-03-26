@@ -22,6 +22,7 @@ namespace CEFDemo
             {
                 Dock = DockStyle.Fill,
             };
+            // Register a function that provides the bridge object
             _browser.JavascriptObjectRepository.ResolveObject += JavascriptObjectRepository_ResolveObject;
             CefPanel.Controls.Add(_browser);
         }
@@ -31,6 +32,7 @@ namespace CEFDemo
 
         private void JavascriptObjectRepository_ResolveObject(object sender, CefSharp.Event.JavascriptBindingEventArgs e)
         {
+            // Check if asked for an object with name "brdige"
             if (e.ObjectName == "bridge")
             {
                 _bridge = new ApplicationBridge(_browser.GetMainFrame(), EditItem);
